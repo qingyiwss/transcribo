@@ -100,19 +100,18 @@ export default function PricingCards() {
             ))}
           </ul>
 
-          {/* CTA */}
-          <a
-            href={`/api/stripe/checkout?plan=${plan.id}`}
+          {/* CTA — disabled during beta */}
+          <button
+            disabled
             className={cn(
-              "mt-6 flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition-all active:scale-[0.98]",
+              "mt-6 flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold cursor-not-allowed opacity-60",
               plan.popular
-                ? "bg-indigo-600 text-white hover:bg-indigo-700"
-                : "border border-indigo-600 bg-white text-indigo-600 hover:bg-indigo-50"
+                ? "bg-indigo-600 text-white"
+                : "border border-indigo-600 bg-white text-indigo-600"
             )}
           >
-            Top Up
-            <ArrowRight className="h-4 w-4" />
-          </a>
+            Free in Beta
+          </button>
         </div>
       ))}
     </div>

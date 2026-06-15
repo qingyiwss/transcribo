@@ -13,6 +13,8 @@ export default function SignupPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  const [success, setSuccess] = useState(false);
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
@@ -24,16 +26,34 @@ export default function SignupPage() {
       password,
     });
 
+    setLoading(false);
+
     if (authError) {
       setError(authError.message);
-      setLoading(false);
       return;
     }
 
-    // Sign-up successful — redirect to dashboard.
-    // If email confirmation is enabled, the user will get an email first.
-    router.push("/dashboard");
-    router.refresh();
+    // Show success message — user needs to verify email
+    setSuccess(true);
+  }
+
+  if (success) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-zinc-50 px-4">
+        <div className="w-full max-w-sm text-center">
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100">
+            <svg className="h-6 w-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+          </div>
+          <h1 className="mb-2 text-xl font-semibold text-zinc-900">Check your email</h1>
+          <p className="mb-6 text-sm text-zinc-500">
+            We sent a verification link to <strong>{email}</strong>. Click the link to activate your account.
+          </p>
+          <Link href="/auth/login" className="text-sm font-medium text-indigo-600 hover:text-indigo-700">
+            Go to sign in
+          </Link>
+        </div>
+      </div>
+    );
   }
 
   return (
