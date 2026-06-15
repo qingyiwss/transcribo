@@ -1,36 +1,127 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Transcribo
 
-## Getting Started
+AI 驱动的音频转文字服务。上传音频文件，自动转录为文本，支持多语言。
 
-First, run the development server:
+## 技术栈
+
+- **前端框架**: Next.js 14 (App Router)
+- **后端 API**: Next.js Route Handlers
+- **数据库**: Supabase (PostgreSQL)
+- **认证**: Supabase Auth
+- **支付**: Stripe
+- **语音识别**: OpenAI-compatible ASR API
+- **样式**: Tailwind CSS v4
+
+## 功能特性
+
+- 用户注册/登录（Supabase Auth）
+- 音频文件上传与转录
+- 转录历史记录仪表盘
+- Stripe 支付集成（按量计费）
+- 新用户赠送 5 分钟免费额度
+
+## 快速开始
+
+### 前置要求
+
+- Node.js 18+
+- Supabase 项目（[supabase.com](https://supabase.com)）
+- Stripe 账号（[stripe.com](https://stripe.com)）
+- OpenAI-compatible ASR API 端点
+
+### 1. 克隆项目
+
+```bash
+git clone <repo-url>
+cd transcribo
+```
+
+### 2. 安装依赖
+
+```bash
+npm install
+```
+
+### 3. 配置环境变量
+
+复制环境变量模板并填入真实值：
+
+```bash
+cp .env.local.example .env.local
+```
+
+编辑 `.env.local`，填入以下变量：
+
+| 变量名 | 说明 |
+|--------|------|
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase 项目 URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase 匿名密钥 |
+| `STRIPE_SECRET_KEY` | Stripe 密钥（服务端） |
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Stripe 可发布密钥（客户端） |
+| `STRIPE_WEBHOOK_SECRET` | Stripe Webhook 签名密钥 |
+| `NEXT_PUBLIC_APP_URL` | 应用地址，默认 `http://localhost:3000` |
+| `TRANSCRIPTION_API_URL` | ASR 转录 API 端点 |
+
+### 4. 执行数据库迁移
+
+在 Supabase 控制台的 **SQL Editor** 中，执行迁移文件：
+
+```sql
+-- 打开 supabase/migrations/001_init.sql
+-- 将全部 SQL 粘贴到 Supabase SQL Editor 中执行
+```
+
+或者使用 Supabase CLI：
+
+```bash
+npx supabase db push
+```
+
+### 5. 配置 Stripe Webhook
+
+1. 在 Stripe Dashboard 中创建 Webhook Endpoint
+2. Endpoint URL: `https://你的域名/api/stripe/webhook`
+3. 监听事件: `checkout.session.completed`
+4. 获取 Webhook Signing Secret 填入 `.env.local`
+
+### 6. 启动开发服务器
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+访问 [http://localhost:3000](http://localhost:3000)。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 7. 构建生产版本
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+npm start
+```
 
-## Learn More
+## 项目结构
 
-To learn more about Next.js, take a look at the following resources:
+```
+transcribo/
+├── src/
+│   ├── app/                    # Next.js App Router 页面与 API
+│   │   ├── api/
+│   │   │   ├── stripe/         # Stripe checkout & webhook
+│   │   │   └── transcribe/     # 转录 API
+│   │   ├── auth/               # 登录/注册/回调
+│   │   ├── dashboard/          # 用户仪表盘
+│   │   ├── pricing/            # 定价页面
+│   │   ├── transcribe/         # 转录详情
+│   │   └── upload/             # 上传页面
+│   ├── components/             # React 组件
+│   └── lib/
+│       ├── supabase/           # Supabase 客户端
+│       └── types.ts            # TypeScript 类型定义
+├── supabase/
+│   └── migrations/             # 数据库迁移文件
+└── package.json
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 许可
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT
